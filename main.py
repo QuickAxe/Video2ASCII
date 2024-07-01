@@ -9,11 +9,44 @@ asciiWidth = 4
 
 # ascii array to store the mapping
 
-asciiArr = [' ', '.', '-', "'", ':', '=', '+', '!', 'r', 'c', '*', 'v', ')', 'J', '7',
-            '(', '|', 'F', 'i', '}', 'f', 'a', ']', '2', 'E', 'S', 'w', 'B', 'g', '0', '%', '&', '@']
+asciiArr = [
+    " ",
+    ".",
+    "-",
+    "'",
+    ":",
+    "=",
+    "+",
+    "!",
+    "r",
+    "c",
+    "*",
+    "v",
+    ")",
+    "J",
+    "7",
+    "(",
+    "|",
+    "F",
+    "i",
+    "}",
+    "f",
+    "a",
+    "]",
+    "2",
+    "E",
+    "S",
+    "w",
+    "B",
+    "g",
+    "0",
+    "%",
+    "&",
+    "@",
+]
 
 
-while (True):
+while True:
 
     ret, frame = vid.read()
     originalX, originalY, _ = frame.shape
@@ -39,10 +72,9 @@ while (True):
     newYstart = (originalY // 2) - (originalX // 2)
     newYend = (originalY // 2) + (originalX // 2)
 
-    frame = frame[:, newYstart: newYend, :]
+    frame = frame[:, newYstart:newYend, :]
 
-    resizedFrame = cv.resize(
-        frame, (originalX // asciiWidth, originalX // asciiWidth))
+    resizedFrame = cv.resize(frame, (originalX // asciiWidth, originalX // asciiWidth))
 
     resizedFrame = cv.GaussianBlur(resizedFrame, ksize=(3, 3), sigmaX=3)
 
@@ -63,8 +95,9 @@ while (True):
     fontFace = cv.FONT_HERSHEY_PLAIN
 
     ((fw, fh), baseline) = cv.getTextSize(
-        "", fontFace=fontFace, fontScale=fontScale, thickness=1)  # empty string is good enough
-    factor = (fh-1) / fontScale
+        "", fontFace=fontFace, fontScale=fontScale, thickness=1
+    )  # empty string is good enough
+    factor = (fh - 1) / fontScale
 
     # using the factor now
     thickness = 1
@@ -72,21 +105,27 @@ while (True):
     fontScale = (height_in_pixels - thickness) / factor
 
     for i in range(0, originalX, asciiWidth):
-        for j in range(0, originalX , asciiWidth):
+        for j in range(0, originalX, asciiWidth):
 
             pixel = resizedFrame[i // asciiWidth, j // asciiWidth]
 
-            asciiChar = asciiArr[pixel % len(asciiArr)]
+            asciiChar = asciiArr[pixel]
 
-            asciiFrame = cv.putText(asciiFrame, asciiChar, (i, j), fontFace=fontFace,
-                                    fontScale=fontScale, color=255, thickness=thickness, bottomLeftOrigin=False)
-
-    asciiFrame = cv.rotate(asciiFrame, cv.ROTATE_90_CLOCKWISE)
+            asciiFrame = cv.putText(
+                asciiFrame,
+                asciiChar,
+                (j, i),
+                fontFace=fontFace,
+                fontScale=fontScale,
+                color=255,
+                thickness=thickness,
+                bottomLeftOrigin=False,
+            )
 
     cv.imshow("art", asciiFrame)
     cv.imshow("original", resizedFrame * 20)
 
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    if cv.waitKey(1) & 0xFF == ord("q"):
         break
 
 # After the loop release the cap object
