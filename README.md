@@ -1,5 +1,5 @@
 # Video2ASCII
-a simple, maybe too simple, code to convert video to ascii art. <br />
+A simple, maybe too simple, code to convert video to ascii art. <br />
 Realtime video runs at about 20fps if the ascii character width is set to 4px. <br />
 Using video files tends to run really slow, maybe about 2fps.
 
