@@ -1,8 +1,10 @@
 # Video2ASCII
-a simple, maybe too simple, code to convert realtime video to ascii art
+a simple, maybe too simple, code to convert video to ascii art\n
+Realtime video runs at about 20fps if the ascii character width is set to 4px.
+Using video files tends to run really slow, maybe about 2fps.
 
 ## Sample Video
-(Sped up by about 900%, but it somehow works faster for real time video)
+(Sped up by about 900%)
 (ignore compression artefacts)
 
 
