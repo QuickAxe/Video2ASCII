@@ -2,7 +2,13 @@ import cv2 as cv
 import numpy as np
 from math import floor
 
-vid = cv.VideoCapture(0)
+
+path = "./rick.mp4"
+
+# comment the below line to use a video file, with the path specified above
+# path = 0
+
+vid = cv.VideoCapture(path)
 
 # resolution to represent each character by, in pixels
 asciiWidth = 4
@@ -16,6 +22,11 @@ asciiArr = [' ', '.', '-', "'", ':', '_', ',', '^', '=', ';', '>', '<', '+', '!'
 while (True):
 
     ret, frame = vid.read()
+    
+    if not ret:
+        print("video either not available, or has ended :(")
+        break
+    
     originalX, originalY, _ = frame.shape
 
     # ===========================================  crop the original rectangular image to a square ============================================================
@@ -82,7 +93,6 @@ while (True):
                                     fontScale=fontScale, color=color, thickness=thickness, bottomLeftOrigin=False)
 
     cv.imshow("art", asciiFrame)
-    cv.imshow("original", resizedFrame)
 
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
