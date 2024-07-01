@@ -9,8 +9,8 @@ asciiWidth = 4
 
 # ascii array to store the mapping
 
-asciiArr = [' ', '.', '-', "'", ':', '=', '+', '!', 'r', 'c', '*', 'v', ')', 'J', '7',
-            '(', '|', 'F', 'i', '}', 'f', 'a', ']', '2', 'E', 'S', 'w', 'B', 'g', '0', '%', '&', '@']
+asciiArr = [" ", '.', '-', "'", ':', '_', ',', '^', '=', ';', '>', '<', '+', '!', 'r', 'c', '*', '/', 'z', '?', 's', 'L', 'T', 'v', ')', 'J', '7',
+            '(', '|', 'F', 'i', '{', 'C', '}', 'f', 'I', '3', '1', 't', 'l', 'u', '[', 'n', 'e', 'o', 'Z', '5', 'Y', 'x', 'j', 'y', 'a', ']', '2', 'E', 'S', 'w', 'q', 'k', 'P', '6', 'h', '9', 'd', '4', 'V', 'p', 'O', 'G', 'b', 'U', 'A', 'K', 'X', 'H', 'm', '8', 'R', 'D', '#', '$', 'B', 'g', '0', 'M', 'N', 'W', 'Q', '%', '&', '@']
 
 
 while (True):
@@ -50,7 +50,7 @@ while (True):
 
     resizedFrame = cv.cvtColor(resizedFrame, cv.COLOR_BGR2GRAY)
 
-    resizedFrame = resizedFrame // len(asciiArr)
+    resizedFrame = (resizedFrame // len(asciiArr))
 
     asciiFrame = np.zeros((originalX, originalX), dtype=np.uint8)
 
@@ -72,16 +72,17 @@ while (True):
     fontScale = (height_in_pixels - thickness) / factor
 
     for i in range(0, originalX, asciiWidth):
-        for j in range(0, originalX , asciiWidth):
+        for j in range(0, originalX, asciiWidth):
 
             pixel = resizedFrame[i // asciiWidth, j // asciiWidth]
+            # print(pixel)
 
             asciiChar = asciiArr[pixel % len(asciiArr)]
 
-            asciiFrame = cv.putText(asciiFrame, asciiChar, (i, j), fontFace=fontFace,
+            asciiFrame = cv.putText(asciiFrame, asciiChar, (j, i), fontFace=fontFace,
                                     fontScale=fontScale, color=255, thickness=thickness, bottomLeftOrigin=False)
 
-    asciiFrame = cv.rotate(asciiFrame, cv.ROTATE_90_CLOCKWISE)
+    # asciiFrame = cv.rotate(asciiFrame, cv.ROTATE_90_CLOCKWISE)
 
     cv.imshow("art", asciiFrame)
     cv.imshow("original", resizedFrame * 20)
