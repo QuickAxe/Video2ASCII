@@ -43,19 +43,12 @@ while (True):
         frame, (originalX // asciiWidth, originalX // asciiWidth))
 
     resizedFrame = cv.GaussianBlur(resizedFrame, ksize=(3, 3), sigmaX=3)
-
-    # ======================================================== quantize the image into bins =================================================================
-
-    resizedFrame = cv.cvtColor(resizedFrame, cv.COLOR_BGR2GRAY)
-
-    # resizedFrame = (resizedFrame / 255) * (len(asciiArr) + 1)
-    # resizedFrame = resizedFrame // len(asciiArr) * len(asciiArr)
-    # resizedFrame = [  [ int(i) for i in j ] for j in resizedFrame]
+    grayFrame = cv.cvtColor(resizedFrame, cv.COLOR_BGR2GRAY)
 
     # ======================================================== assign respective ascii values to the frame ==================================================
     # using nested loops, which is a horrible way to do it
 
-    # ------  some weird roundabout way to get the font to reder based on pixel size -----------------
+    # ----------------  some weird roundabout way to get the font to render based on pixel size -----------------
     # calculating a factor here
     fontScale = 10
     fontFace = cv.FONT_HERSHEY_PLAIN
@@ -70,20 +63,26 @@ while (True):
 
     # =================================================================== main conversion ====================================================================
 
-    asciiFrame = np.zeros((originalX, originalX), dtype=np.uint8)
+    asciiFrame = np.zeros((originalX, originalX, 3), dtype=np.uint8)
 
     for i in range(0, originalX, asciiWidth):
         for j in range(0, originalX, asciiWidth):
 
-            pixel = resizedFrame[i // asciiWidth, j // asciiWidth]
+            pixel = grayFrame[i // asciiWidth, j // asciiWidth]
 
+            # map the intensity value to an ascii character
             asciiChar = asciiArr[int(pixel / 256 * len(asciiArr))]
 
+            # find the colour of the original image, to set the ascii character to that colour
+            b, g, r = resizedFrame[i // asciiWidth, j // asciiWidth]
+            color = (int(b), int(g), int(r))
+
+            # add the ascii character to the output frame
             asciiFrame = cv.putText(asciiFrame, asciiChar, (j, i), fontFace=fontFace,
-                                    fontScale=fontScale, color=255, thickness=thickness, bottomLeftOrigin=False)
+                                    fontScale=fontScale, color=color, thickness=thickness, bottomLeftOrigin=False)
 
     cv.imshow("art", asciiFrame)
-    cv.imshow("original", (resizedFrame // len(asciiArr)))
+    cv.imshow("original", resizedFrame)
 
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
