@@ -11,7 +11,7 @@ path = "./sampleVid.mp4"
 vid = cv.VideoCapture(path)
 
 # resolution to represent each character by, in pixels
-asciiWidth = 15
+asciiWidth = 20
 
 # ascii array to store the mapping
 asciiArr = [' ', '.', '-', "'", ':', '_', ',', '^', '=', ';', '>', '<', '+', '!', 'r', 'c', '*', '/', 'z', '?', 's', 'L', 'T', 'v', ')', 'J', '7',
@@ -19,6 +19,16 @@ asciiArr = [' ', '.', '-', "'", ':', '_', ',', '^', '=', ';', '>', '<', '+', '!'
             'E', 'S', 'w', 'q', 'k', 'P', '6', 'h', '9', 'd', '4', 'V', 'p', 'O', 'G', 'b', 'U', 'A', 'K', 'X', 'H', 'm', '8', 'R', 'D', '#', '$',
             'B', 'g', '0', 'M', 'N', 'W', 'Q', '%', '&', '@']
 asciiLevels = len(asciiArr)
+fontScale = asciiWidth*16
+fontFace = cv.FONT_HERSHEY_PLAIN
+
+((fw, fh), baseline) = cv.getTextSize(
+    "", fontFace=fontFace, fontScale=fontScale, thickness=1)  # empty string is good enough
+factor = (fh-1) / fontScale
+
+thickness = 1
+height_in_pixels = asciiWidth  # or 20, code works either way
+fontScale = (height_in_pixels - thickness) / factor
 
 while (True):
 
@@ -62,16 +72,7 @@ while (True):
 
     # ----------------  some weird roundabout way to get the font to render based on pixel size -----------------
     # calculating a factor here
-    fontScale = asciiWidth*32
-    fontFace = cv.FONT_HERSHEY_PLAIN
 
-    ((fw, fh), baseline) = cv.getTextSize(
-        "", fontFace=fontFace, fontScale=fontScale, thickness=1)  # empty string is good enough
-    factor = (fh-1) / fontScale
-
-    thickness = 1
-    height_in_pixels = asciiWidth  # or 20, code works either way
-    fontScale = (height_in_pixels - thickness) / factor
 
     # =================================================================== main conversion ====================================================================
 
