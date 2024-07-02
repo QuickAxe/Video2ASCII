@@ -98,7 +98,7 @@ while (True):
 
     cv.imshow("art", asciiFrame)
 
-    if cv.waitKey(1) & (0xFF == ord('q') or cv.getWindowProperty('art',cv.WND_PROP_VISIBLE) < 1):
+    if cv.waitKey(1) & 0xFF == ord('q') or cv.getWindowProperty('art',cv.WND_PROP_VISIBLE) < 1:
         break
 
 # After the loop release the cap object
