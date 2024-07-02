@@ -30,14 +30,7 @@ thickness = 1
 height_in_pixels = asciiWidth  # or 20, code works either way
 fontScale = (height_in_pixels - thickness) / factor
 
-while (True):
-
-    ret, frame = vid.read()
-    
-    if not ret:
-        print("video either not available, or has ended :(")
-        break
-    
+def img2ASCII(frame: np.ndarray) -> np.ndarray:
     originalX, originalY, _ = frame.shape
 
     # ===========================================  crop the original rectangular image to a square ============================================================
@@ -96,7 +89,17 @@ while (True):
             # add the ascii character to the output frame
             asciiFrame = cv.putText(asciiFrame, asciiChar, (j, i), fontFace=fontFace,
                                     fontScale=fontScale, color=color, thickness=thickness, bottomLeftOrigin=False)
+    return asciiFrame
+    
+while (True):
 
+    ret, frame = vid.read()
+    
+    if not ret:
+        print("video either not available, or has ended :(")
+        break
+    
+    asciiFrame = img2ASCII(frame)
     cv.imshow("art", asciiFrame)
 
     if cv.waitKey(1) & 0xFF == ord('q') or cv.getWindowProperty('art',cv.WND_PROP_VISIBLE) < 1:
