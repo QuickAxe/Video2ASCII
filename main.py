@@ -3,7 +3,7 @@ import numpy as np
 from math import floor
 
 
-path = "./rick.mp4"
+path = "./sampleVid.mp4"
 
 # comment the below line to use a video file, with the path specified above
 # path = 0
@@ -11,22 +11,26 @@ path = "./rick.mp4"
 vid = cv.VideoCapture(path)
 
 # resolution to represent each character by, in pixels
-asciiWidth = 4
+asciiWidth = 20
 
 # ascii array to store the mapping
 asciiArr = [' ', '.', '-', "'", ':', '_', ',', '^', '=', ';', '>', '<', '+', '!', 'r', 'c', '*', '/', 'z', '?', 's', 'L', 'T', 'v', ')', 'J', '7',
             '(', '|', 'F', 'i', '{', 'C', '}', 'f', 'I', '3', '1', 't', 'l', 'u', '[', 'n', 'e', 'o', 'Z', '5', 'Y', 'x', 'j', 'y', 'a', ']', '2',
             'E', 'S', 'w', 'q', 'k', 'P', '6', 'h', '9', 'd', '4', 'V', 'p', 'O', 'G', 'b', 'U', 'A', 'K', 'X', 'H', 'm', '8', 'R', 'D', '#', '$',
             'B', 'g', '0', 'M', 'N', 'W', 'Q', '%', '&', '@']
+asciiLevels = len(asciiArr)
+fontScale = asciiWidth*16
+fontFace = cv.FONT_HERSHEY_PLAIN
 
-while (True):
+((fw, fh), baseline) = cv.getTextSize(
+    "", fontFace=fontFace, fontScale=fontScale, thickness=1)  # empty string is good enough
+factor = (fh-1) / fontScale
 
-    ret, frame = vid.read()
-    
-    if not ret:
-        print("video either not available, or has ended :(")
-        break
-    
+thickness = 1
+height_in_pixels = asciiWidth  # or 20, code works either way
+fontScale = (height_in_pixels - thickness) / factor
+
+def img2ASCII(frame: np.ndarray) -> np.ndarray:
     originalX, originalY, _ = frame.shape
 
     # ===========================================  crop the original rectangular image to a square ============================================================
@@ -61,28 +65,22 @@ while (True):
 
     # ----------------  some weird roundabout way to get the font to render based on pixel size -----------------
     # calculating a factor here
-    fontScale = 10
-    fontFace = cv.FONT_HERSHEY_PLAIN
 
-    ((fw, fh), baseline) = cv.getTextSize(
-        "", fontFace=fontFace, fontScale=fontScale, thickness=1)  # empty string is good enough
-    factor = (fh-1) / fontScale
-
-    thickness = 1
-    height_in_pixels = asciiWidth  # or 20, code works either way
-    fontScale = (height_in_pixels - thickness) / factor
 
     # =================================================================== main conversion ====================================================================
 
     asciiFrame = np.zeros((originalX, originalX, 3), dtype=np.uint8)
-
+    grayFrame = np.rint(np.multiply(grayFrame, asciiLevels/256)).astype(int)
+     
+    
+    
     for i in range(0, originalX, asciiWidth):
         for j in range(0, originalX, asciiWidth):
 
             pixel = grayFrame[i // asciiWidth, j // asciiWidth]
 
             # map the intensity value to an ascii character
-            asciiChar = asciiArr[int(pixel / 256 * len(asciiArr))]
+            asciiChar = asciiArr[pixel]
 
             # find the colour of the original image, to set the ascii character to that colour
             b, g, r = resizedFrame[i // asciiWidth, j // asciiWidth]
@@ -91,10 +89,20 @@ while (True):
             # add the ascii character to the output frame
             asciiFrame = cv.putText(asciiFrame, asciiChar, (j, i), fontFace=fontFace,
                                     fontScale=fontScale, color=color, thickness=thickness, bottomLeftOrigin=False)
+    return asciiFrame
+    
+while (True):
 
+    ret, frame = vid.read()
+    
+    if not ret:
+        print("video either not available, or has ended :(")
+        break
+    
+    asciiFrame = img2ASCII(frame)
     cv.imshow("art", asciiFrame)
 
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    if cv.waitKey(1) & 0xFF == ord('q') or cv.getWindowProperty('art',cv.WND_PROP_VISIBLE) < 1:
         break
 
 # After the loop release the cap object
