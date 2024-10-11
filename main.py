@@ -65,6 +65,7 @@ if __name__ == "__main__":
     path = "./sample.mp4"
 
     # comment the below line to use a video file, with the path specified above
+    # uncomment it to use a webcam feed instead
     # path = 0
 
     vid = cv.VideoCapture(path)
